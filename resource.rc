@@ -1,0 +1,58 @@
+#include "resource.h"
+#include <windows.h>
+
+// Icon
+IDI_TRAY_ICON ICON "tray_icon.ico"
+
+// Password Dialog
+IDD_PASSWORD_DIALOG DIALOGEX 0, 0, 320, 180
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_CENTER
+CAPTION "Archive Password Required - Auto Unzip Service"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            IDI_TRAY_ICON,IDC_STATIC,10,10,20,20
+    LTEXT           "Archive:",IDC_STATIC,40,10,270,10
+    LTEXT           "",IDC_FILENAME_STATIC,40,25,270,10,SS_PATHELLIPSIS
+    LTEXT           "This archive appears to be password protected and cannot be extracted without authentication.",IDC_STATIC,10,45,300,20
+    
+    GROUPBOX        "Authentication",IDC_STATIC,10,70,300,75
+    LTEXT           "&Password:",IDC_STATIC,20,90,50,10
+    EDITTEXT        IDC_PASSWORD_EDIT,80,88,150,14,ES_PASSWORD | ES_AUTOHSCROLL
+    LTEXT           "&2FA Code (optional):",IDC_2FA_LABEL,20,110,80,10
+    EDITTEXT        IDC_2FA_EDIT,110,108,120,14,ES_AUTOHSCROLL
+    LTEXT           "Leave 2FA field empty if not required",IDC_STATIC,20,125,200,10
+    
+    DEFPUSHBUTTON   "&Extract",IDC_PASSWORD_OK,150,155,50,14
+    PUSHBUTTON      "&Skip This File",IDC_PASSWORD_SKIP,210,155,60,14
+    PUSHBUTTON      "Cancel",IDCANCEL,280,155,30,14
+END
+
+// Version Information
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Auto Unzip Service"
+            VALUE "FileDescription", "Automatic Archive Extractor Service"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "AutoUnzipService"
+            VALUE "LegalCopyright", "Copyright (C) 2025"
+            VALUE "OriginalFilename", "AutoUnzipService.exe"
+            VALUE "ProductName", "Auto Unzip Service"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

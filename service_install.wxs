@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="ServiceComponents">
+      <Component Id="AutoUnzipServiceComponent" Guid="11111111-1111-1111-1111-111111111111" Directory="INSTALLFOLDER">
+        <File Id="AutoUnzipServiceExe" 
+              Source="$(var.AutoUnzipService.TargetPath)" 
+              KeyPath="yes" />
+        
+        <!-- Service Installation -->
+        <ServiceInstall Id="AutoUnzipServiceInstall"
+                        Name="AutoUnzipService"
+                        DisplayName="Auto Unzip Service"
+                        Description="Automatically extracts archives in the Downloads folder"
+                        Type="ownProcess"
+                        Start="auto"
+                        Account="LocalSystem"
+                        ErrorControl="normal"
+                        Interactive="no" />
+        
+        <!-- Service Control -->
+        <ServiceControl Id="AutoUnzipServiceControl"
+                        Name="AutoUnzipService"
+                        Start="install"
+                        Stop="both"
+                        Remove="uninstall"
+                        Wait="yes" />
+      </Component>
+      
+      <!-- Registry entries for configuration -->
+      <Component Id="RegistryComponent" Guid="22222222-2222-2222-2222-222222222222" Directory="INSTALLFOLDER">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\AutoUnzipService">
+          <RegistryValue Name="InstallPath" Type="string" Value="[INSTALLFOLDER]" KeyPath="yes" />
+          <RegistryValue Name="Version" Type="string" Value="1.0.0" />
+          <RegistryValue Name="AutoStart" Type="integer" Value="1" />
+        </RegistryKey>
+      </Component>
+      
+      <!-- Start Menu Shortcuts -->
+      <Component Id="StartMenuComponent" Guid="33333333-3333-3333-3333-333333333333" Directory="ProgramMenuFolder">
+        <Shortcut Id="StartMenuShortcut"
+                  Name="Auto Unzip Service"
+                  Description="Configure Auto Unzip Service"
+                  Target="[INSTALLFOLDER]AutoUnzipService.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="RemoveStartMenuFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\AutoUnzipService" Name="StartMenuInstalled" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  
+  <!-- Custom Actions -->
+  <Fragment>
+    <CustomAction Id="StartService" 
+                  FileKey="AutoUnzipServiceExe" 
+                  ExeCommand="-install" 
+                  Execute="deferred" 
+                  Impersonate="no" />
+    
+    <CustomAction Id="StopService" 
+                  FileKey="AutoUnzipServiceExe" 
+                  ExeCommand="-uninstall" 
+                  Execute="deferred" 
+                  Impersonate="no" />
+    
+    <!-- Installation Sequence -->
+    <InstallExecuteSequence>
+      <Custom Action="StartService" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="StopService" Before="RemoveFiles">Installed AND (REMOVE="ALL")</Custom>
+    </InstallExecuteSequence>
+  </Fragment>
+</Wix>
